@@ -1,6 +1,6 @@
 @echo off
-set VERSION=1.17
-set MD5SUM=4836693B30EF1309EDED8A07885E454A
+set VERSION=1.18
+set MD5SUM=FC9191887DF37CAE289071727CC38256
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) JustOff 2015, Off.Just.Off@gmail.com, licensed under MIT
@@ -29,13 +29,7 @@ rem .		https://github.com/JustOff/cpf-update-win/releases/latest
 rem .		4. Place the executables from step 3 into "Update" folder
 rem .		
 if "%1"=="fork" goto fork
-if "%1"=="md5" goto md5update
 start %~nx0 fork
-exit
-:md5update
-for /F "delims= " %%i in ('Update\sed.exe "3d" %~nx0 ^| Update\md5.exe') do set MD5SELF=%%i
-echo %MD5SELF%
-Update\sed.exe -i "s/^set MD5SUM.*/set MD5SUM=%MD5SELF%/" %~nx0
 exit
 :fork
 if exist Update goto iswprompt
