@@ -1,6 +1,6 @@
 @echo off
 set VERSION=1.17
-set MD5SUM=CCF6445C473216D36D2104180BE13819
+set MD5SUM=4836693B30EF1309EDED8A07885E454A
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) JustOff 2015, Off.Just.Off@gmail.com, licensed under MIT
