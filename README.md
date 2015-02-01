@@ -1,4 +1,4 @@
-# Chromium and Pepper Flash update script for winPenPack
+**Chromium and Pepper Flash update script for winPenPack**
 
 Installation:
 
@@ -20,4 +20,4 @@ Credits and Thanks:
 * [Dreamlikes](https://code.google.com/p/gnu-on-windows/)
 * [John Walker](https://www.fourmilab.ch/md5/)
 
-&copy; JustOff 2015
+**&copy; JustOff 2015**
