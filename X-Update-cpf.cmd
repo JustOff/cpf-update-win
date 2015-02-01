@@ -1,6 +1,6 @@
 @echo off
-set VERSION=1.18
-set MD5SUM=FC9191887DF37CAE289071727CC38256
+set VERSION=1.19
+set MD5SUM=59DCC52D3DC9049117E8F608C481337D
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) JustOff 2015, Off.Just.Off@gmail.com, licensed under MIT
@@ -101,7 +101,7 @@ wget.exe -q --no-check-certificate %UPD%?%RANDOM%^&%RANDOM% -O ..\Temp\UPDATE
 if errorlevel 1 goto upderror
 if not exist "..\Temp\UPDATE" goto upderror
 for /F "delims=" %%i in ('sed.exe "/^set MD5SUM/!d;s/set MD5SUM=//" ^< ..\Temp\UPDATE') do set MD5UPDATE=%%i
-for /F "delims= " %%j in ('sed.exe "3d" ..\Temp\UPDATE ^| md5.exe') do set MD5CHECK=%%j
+for /F "delims=" %%j in ('sed.exe "3d" ..\Temp\UPDATE ^| md5.exe -n') do set MD5CHECK=%%j
 if "%MD5UPDATE%" NEQ "%MD5CHECK%" goto upderror
 for /F "delims=" %%i in ('sed.exe "/^set VERSION/!d;s/set VERSION=//" ^< ..\Temp\UPDATE') do set UPDATE=%%i
 wbusy.exe "Self Update" /stop
