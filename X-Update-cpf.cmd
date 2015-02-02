@@ -1,6 +1,6 @@
 @echo off
-set VERSION=1.20
-set MD5SUM=8A88DDA7937D9871F13871C51DAAF9C7
+set VERSION=1.21
+set MD5SUM=A5CF582C6D86CE0D02D06918FF29E399
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -26,8 +26,9 @@ rem .		3. Run script and follow the wizard to get all required
 rem .		utilities from corresponding sites or download single archive
 rem .		cpf-update-win-utils.zip from release page on GitHub at
 rem .		https://github.com/JustOff/cpf-update-win/releases/latest
-rem .		4. Place the executables from step 3 into "Update" folder
-rem .		
+rem .		4. Save the executables from step 3 into "Update" folder
+rem .
+cd /d %~dp0		
 if "%1"=="fork" goto fork
 start %~nx0 fork
 exit
