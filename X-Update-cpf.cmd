@@ -1,9 +1,9 @@
 @echo off
-set VERSION=1.19
-set MD5SUM=59DCC52D3DC9049117E8F608C481337D
+set VERSION=1.20
+set MD5SUM=8A88DDA7937D9871F13871C51DAAF9C7
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
-rem .	(c) JustOff 2015, Off.Just.Off@gmail.com, licensed under MIT
+rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
 rem .
 rem .	Credits and Thanks:
 rem .		Chromium Projects - http://www.chromium.org/
@@ -266,6 +266,7 @@ if exist "..\Flash-new" rmdir /S /Q ..\Flash-new
 goto quit
 :flashdownerror
 wbusy.exe "Flash Update" "Update package is damaged^Try to update again later" /stop
+if exist "..\Flash-new" rmdir /S /Q ..\Flash-new
 goto quit
 :flashserverror
 wbusy.exe "Flash Update" "Connection to server could not be established" /stop
