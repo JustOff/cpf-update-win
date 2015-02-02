@@ -1,6 +1,6 @@
 @echo off
-set VERSION=1.21
-set MD5SUM=A5CF582C6D86CE0D02D06918FF29E399
+set VERSION=1.22
+set MD5SUM=F4F59F6AA95E4733E86AA64D3A54D181
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -112,7 +112,8 @@ if errorlevel 2 goto checkchromium
 echo @echo off > ..\Temp\X-Self-cpf.cmd
 echo wprompt.exe "Self Update" "%~nx0 ready to update from %VERSION% to %UPDATE%" Ok 1:2 >> ..\Temp\X-Self-cpf.cmd
 echo copy /y ..\Temp\UPDATE ..\%~nx0 >> ..\Temp\X-Self-cpf.cmd
-echo wprompt.exe "Self Update" "%~nx0 update complete!" Ok 1 >> ..\Temp\X-Self-cpf.cmd
+echo wprompt.exe "Self Update" "%~nx0 update complete!" Ok 1:3 >> ..\Temp\X-Self-cpf.cmd
+echo start ..\X-Update-cpf.cmd ..\%~nx0 fork >> ..\Temp\X-Self-cpf.cmd
 echo exit >> ..\Temp\X-Self-cpf.cmd
 start ..\Temp\X-Self-cpf.cmd
 exit
