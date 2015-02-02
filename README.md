@@ -1,11 +1,10 @@
 **Chromium and Pepper Flash update script for winPenPack**
 
-Installation:
+Installation for winPenPack [X-Chromium](http://www.winpenpack.com/en/download.php?view.1082):
 
-1. Download and extract winPenPack [X-Chromium](http://www.winpenpack.com/en/download.php?view.1082)
-2. Place X-Update-cpf.cmd next to X-Chromium.exe and X-Chromium.ini
-3. Run X-Update-cpf.cmd and follow the wizard to get all required utilities from corresponding sites or download single archive cpf-update-win-utils.zip from [release page](https://github.com/JustOff/cpf-update-win/releases/latest)
-4. Place the executables from step 3 into "Update" folder
+1. Place X-Update-cpf.cmd next to X-Chromium.exe and X-Chromium.ini
+2. Run X-Update-cpf.cmd and follow the wizard to get all required utilities from corresponding sites or download single archive cpf-update-win-utils.zip from [release page](https://github.com/JustOff/cpf-update-win/releases/latest)
+3. Place the executables from step 2 into "Update" folder
  
 Alternatively you can start with [cpf-update-win-full.zip](https://github.com/JustOff/cpf-update-win/releases/latest) where winPenPack X-Chromium, updater script and helpers packed all in one. Simple unzip it and run X-Update-cpf.cmd to obtain fresh Chromium and Pepper Flash.
 
