@@ -8,7 +8,7 @@ If you are already using winPenPack [X-Chromium](http://www.winpenpack.com/en/do
  
 Alternatively you can start with *[cpf-update-win-full.zip](https://github.com/JustOff/cpf-update-win/releases/latest)* where winPenPack X-Chromium, updater script and helpers packed all in one. Simple unzip it and run *X-Update-cpf.cmd* to obtain fresh Chromium and Pepper Flash.
 
-[Experimantal] If you want to try x64 Chromium winPenPack package delete Bin and Flash folders, rename *X-Chromium.exe* and *X-Chromium.ini* to *X-Chromium-x64.exe* and *X-Chromium-x64.ini* respectively and run *X-Update-cpf.cmd* to download all the necessary binaries or use prepared *[cpf-update-win-full-x64.zip](https://github.com/JustOff/cpf-update-win/releases/latest)*. Please be warned about [pros and cons of 64-bit version](http://www.makeuseof.com/tag/chrome-64-bit-vs-32-bit-for-windows-is-64-bit-worth-installing/).
+[Experimantal] If you want to try x64 Chromium winPenPack package delete Bin and Flash folders, rename *X-Chromium.exe* and *X-Chromium.ini* to *X-Chromium-x64.exe* and *X-Chromium-x64.ini* respectively or use prepared *[cpf-update-win-full-x64.zip](https://github.com/JustOff/cpf-update-win/releases/latest)* then run *X-Update-cpf.cmd* to download all the necessary binaries. Please be warned about [pros and cons of 64-bit version](http://www.makeuseof.com/tag/chrome-64-bit-vs-32-bit-for-windows-is-64-bit-worth-installing/).
 
 Credits and Thanks:
 * [Chromium Projects](http://www.chromium.org/)
