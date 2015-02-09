@@ -1,6 +1,6 @@
 @echo off
-set VERSION=1.27
-set MD5SUM=6A35CD7D06568DB03A1C8BA5EF39D7D3
+set VERSION=2.03
+set MD5SUM=8EE585A7426E3BDADC864B59FA069D91
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -83,22 +83,43 @@ Update\wprompt.exe "sed.exe not found!" "Please download sed.exe from^^https://c
 start https://code.google.com/p/gnu-on-windows/downloads/list
 exit
 :ismd5
-if exist Update\md5.exe goto begin
+if exist Update\md5.exe goto is32
 Update\wprompt.exe "md5.exe not found!" "Please download md5.exe from^^https://www.fourmilab.ch/md5/^^and place it to Update folder alongside" Ok 1
 start https://www.fourmilab.ch/md5/
 exit
+:is32
+if not exist X-Chromium.ini goto is64
+if not exist X-Chromium.exe goto noxch
+set INI=X-Chromium
+set WDIR=Win
+set BIT=32
+set ARCH=x86
+set AP=
+goto begin
+:is64
+if not exist X-Chromium-x64.ini goto noxch
+if not exist X-Chromium-x64.exe goto noxch
+set INI=X-Chromium-x64
+set WDIR=Win_x64
+set BIT=64
+set ARCH=x64
+set AP=ap=x64-canary
+goto begin
+:noxch
+Update\wprompt.exe "X-Chromium not found!" "The winPenPack X-Chromium package not found or broken!^^Reinstall it from http://www.winpenpack.com/en/download.php?view.1082" Ok 1
+start http://www.winpenpack.com/en/download.php?view.1082
+exit
 :begin
+set CPFUPD=https://raw.githubusercontent.com/JustOff/cpf-update-win/master/X-Update-cpf.cmd
+set WOOLYSS="http://chromium.woolyss.com/api/?os=windows&bit=%BIT%"
+set CHRURL=https://storage.googleapis.com/chromium-browser-continuous/%WDIR%
+set INSTALLER=mini_installer.exe
+set AFLASH=http://fpdownload2.macromedia.com/pub/flashplayer/update/current/sau/16/xml/version.xml
 cd Update
-set UPD=https://raw.githubusercontent.com/JustOff/cpf-update-win/master/X-Update-cpf.cmd
-set WOOLYSS="http://chromium.woolyss.com/api/?os=windows&bit=32"
-set URL=https://storage.googleapis.com/chromium-browser-continuous/Win
-set FILE=mini_installer.exe
-set AFLASH="http://fpdownload2.macromedia.com/pub/flashplayer/update/current/sau/16/xml/version.xml"
-set CANARY="http://clients2.google.com/service/update2/crx?x=id%%3D{4ea16ac7-fd5a-47c3-875b-dbf4a2008c20}%%26uc"
 start wbusy.exe "Self Update" "Searching for script updates ..." /marquee
 if exist "..\Temp" rmdir /S /Q ..\Temp
 md ..\Temp
-wget.exe -q --no-check-certificate %UPD%?%RANDOM%^&%RANDOM% -O ..\Temp\UPDATE
+wget.exe -q --no-check-certificate %CPFUPD%?%RANDOM%^&%RANDOM% -O ..\Temp\UPDATE
 if errorlevel 1 goto upderror
 if not exist "..\Temp\UPDATE" goto upderror
 for /F "delims=" %%i in ('sed.exe "/^set MD5SUM/!d;s/set MD5SUM=//" ..\Temp\UPDATE') do set MD5UPDATE=%%i
@@ -139,7 +160,7 @@ wprompt.exe "Chromium Update" "New Chromium build available!^ ^Current:  %LCHVER
 if errorlevel 2 goto checkflash
 :download
 start wbusy.exe "Chromium Update" "Downloading Chromium %CHRVER% (%CHRREV%) ..." /marquee
-wget.exe --no-check-certificate %URL%/%CHRREV%/%FILE% -O ..\Temp\chrome.zip
+wget.exe --no-check-certificate %CHRURL%/%CHRREV%/%INSTALLER% -O ..\Temp\chrome.zip
 if errorlevel 1 goto serverror
 wbusy.exe "Chromium Update" /stop
 wprompt.exe "Chromium Update" "Chromium %CHRVER% (%CHRREV%) downloaded!^ ^Do you want to install it?" OkCancel 1
@@ -206,10 +227,10 @@ if "%APFVER%"=="%LPFVER%" goto noflashupdate
 wbusy.exe "Flash Update" /stop
 wprompt.exe "Flash Update" "New Flash available!^ ^Current:  %LPFVER%^Recent:   %APFVER%^ ^Do you want to update?" OkCancel 1
 if errorlevel 2 goto quit
-wget.exe -q --no-check-certificate %CANARY% -O ..\Temp\CANARY
+wget.exe --no-check-certificate --post-data "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request protocol=\"3.0\" ismachine=\"1\"><os version=\"6.1\" arch=\"%ARCH%\"/><app appid=\"{4EA16AC7-FD5A-47C3-875B-DBF4A2008C20}\" ap=\"%AP%\"><updatecheck/></app></request>" http://tools.google.com/service/update2 -O ..\Temp\CANARY
 if errorlevel 1 goto flashserverror
 if not exist "..\Temp\CANARY" goto flashserverror
-for /F "tokens=1,2" %%i in ('sed.exe "/<updatecheck/!d;s/.*Version=\"//^;s/\".*codebase=\"/ /^;s/\".*//" ..\Temp\CANARY') do set CANVER=%%i& set CANURL=%%j
+for /F "tokens=1,2" %%i in ('sed.exe "s/.*codebase=\"//^;s/\"\/.*name=\"//^;s/\".*Version=\"/ /^;s/\".*//" ..\Temp\CANARY') do set CANURL=%%i& set CANVER=%%j
 start wbusy.exe "Flash Update" "Downloading Chrome Canary %CANVER% ..." /marquee
 wget.exe --no-check-certificate %CANURL% -O ..\Temp\canary.zip
 if errorlevel 1 goto flashserverror
@@ -237,7 +258,7 @@ goto checkrun3
 :flashfinish
 ren Flash-new Flash
 if exist Flash-old rmdir /S /Q Flash-old
-Update\sed.exe -i "s/disk-cache-dir.*/disk-cache-dir=\"$Cache$\" --ppapi-flash-path=$Root$\\Flash\\pepflashplayer.dll --ppapi-flash-version=%NPFVER%/" X-Chromium.ini
+Update\sed.exe -i "s/disk-cache-dir.*/disk-cache-dir=\"$Cache$\" --ppapi-flash-path=$Root$\\Flash\\pepflashplayer.dll --ppapi-flash-version=%NPFVER%/" %INI%.ini
 cd Update
 wbusy.exe "Flash Update" /stop
 wprompt.exe "Flash Update" "Flash %NPFVER% installed!" Ok 1
