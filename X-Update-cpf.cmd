@@ -1,6 +1,6 @@
 @echo off
-set VERSION=2.03
-set MD5SUM=8EE585A7426E3BDADC864B59FA069D91
+set VERSION=2.06
+set MD5SUM=CB2891725E94F8A61C8B0ACFD0160FA5
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -28,7 +28,8 @@ rem .		cpf-update-win-utils.zip from release page on GitHub at
 rem .		https://github.com/JustOff/cpf-update-win/releases/latest
 rem .		4. Save the executables from step 3 into "Update" folder
 rem .
-cd /d %~dp0 & title "Chromium and Pepper Flash update for winPenPack"
+set TITLE=Chromium and Pepper Flash update for winPenPack
+cd /d %~dp0 & title %TITLE%
 if "%1"=="fork" goto fork
 start %~nx0 fork
 exit
@@ -114,12 +115,12 @@ set CPFUPD=https://raw.githubusercontent.com/JustOff/cpf-update-win/master/X-Upd
 set WOOLYSS="http://chromium.woolyss.com/api/?os=windows&bit=%BIT%"
 set CHRURL=https://storage.googleapis.com/chromium-browser-continuous/%WDIR%
 set INSTALLER=mini_installer.exe
-set AFLASH=http://fpdownload2.macromedia.com/pub/flashplayer/update/current/sau/16/xml/version.xml
+set AFLASH=http://fpdownload.macromedia.com/pub/flashplayer/update/current/sau/16/xml/version.xml
 cd Update
 start wbusy.exe "Self Update" "Searching for script updates ..." /marquee
 if exist "..\Temp" rmdir /S /Q ..\Temp
 md ..\Temp
-wget.exe -q --no-check-certificate %CPFUPD%?%RANDOM%^&%RANDOM% -O ..\Temp\UPDATE
+wget.exe -q --no-check-certificate %CPFUPD%?%RANDOM%^&%RANDOM% -O ..\Temp\UPDATE & title %TITLE%
 if errorlevel 1 goto upderror
 if not exist "..\Temp\UPDATE" goto upderror
 for /F "delims=" %%i in ('sed.exe "/^set MD5SUM/!d;s/set MD5SUM=//" ..\Temp\UPDATE') do set MD5UPDATE=%%i
@@ -143,7 +144,7 @@ wbusy.exe "Self Update" /stop
 wprompt.exe "Self Update" "Script self update error^^Try to check again later ..." Ok 1:3
 :checkchromium
 start wbusy.exe "Chromium Update" "Searching for Chromium updates ..." /marquee
-wget.exe -q --no-check-certificate %WOOLYSS% -O ..\Temp\LASTCHR
+wget.exe -q --no-check-certificate %WOOLYSS% -O ..\Temp\LASTCHR & title %TITLE%
 if errorlevel 1 goto serverror
 if not exist "..\Temp\LASTCHR" goto serverror
 for /F "tokens=1,2" %%i in ('jq.exe -r "[.chromium.windows.version, .chromium.windows.revision|tostring]|join(\" \")" ..\Temp\LASTCHR') do set CHRVER=%%i& set CHRREV=%%j
@@ -152,18 +153,18 @@ for /F "tokens=1,2" %%i in ('jq.exe -r "[.chromium.windows.version, .chromium.wi
 goto compare
 :nolocal
 set LCHVER=undefined
-set LCHREV=-
+set LCHREV=
 :compare
 if "%CHRREV%"=="%LCHREV%" goto noupdate
 wbusy.exe "Chromium Update" /stop
-wprompt.exe "Chromium Update" "New Chromium build available!^ ^Current:  %LCHVER% (%LCHREV%)^Recent:   %CHRVER% (%CHRREV%)^ ^Do you want to update?" OkCancel 1
+wprompt.exe "Chromium Update" "New Chromium build available!^ ^Current:  %LCHVER% (#%LCHREV%)^Recent:   %CHRVER% (#%CHRREV%)^ ^Do you want to update?" OkCancel 1
 if errorlevel 2 goto checkflash
 :download
-start wbusy.exe "Chromium Update" "Downloading Chromium %CHRVER% (%CHRREV%) ..." /marquee
-wget.exe --no-check-certificate %CHRURL%/%CHRREV%/%INSTALLER% -O ..\Temp\chrome.zip
+start wbusy.exe "Chromium Update" "Downloading Chromium %CHRVER% (#%CHRREV%) ..." /marquee
+wget.exe --no-check-certificate %CHRURL%/%CHRREV%/%INSTALLER% -O ..\Temp\chrome.zip & title %TITLE%
 if errorlevel 1 goto serverror
 wbusy.exe "Chromium Update" /stop
-wprompt.exe "Chromium Update" "Chromium %CHRVER% (%CHRREV%) downloaded!^ ^Do you want to install it?" OkCancel 1
+wprompt.exe "Chromium Update" "Chromium %CHRVER% (#%CHRREV%) downloaded!^ ^Do you want to install it?" OkCancel 1
 if errorlevel 2 goto checkflash
 :checkrun
 if not exist "..\User" goto install
@@ -172,7 +173,7 @@ wprompt.exe "Chromium Update" "Please close Chromium to install update!" OkCance
 if errorlevel 2 goto checkflash
 goto checkrun
 :install
-start wbusy.exe "Chromium Update" "Installing Chromium %CHRVER% (%CHRREV%) ..." /marquee
+start wbusy.exe "Chromium Update" "Installing Chromium %CHRVER% (#%CHRREV%) ..." /marquee
 7za.exe x -y -t7z "..\Temp\chrome.zip" -o"..\Temp\"
 if errorlevel 1 goto downloaderror
 7za.exe x -y "..\Temp\chrome.7z" -o"..\Bin\"
@@ -195,11 +196,11 @@ rmdir /S /Q Chrome-old
 cd ..\Update
 copy /y ..\Temp\LASTCHR ..\Bin\VERSION
 wbusy.exe "Chromium Update" /stop
-wprompt.exe "Chromium Update" "Chromium %CHRVER% (%CHRREV%) installed!" Ok
+wprompt.exe "Chromium Update" "Chromium %CHRVER% (#%CHRREV%) installed!" Ok
 goto checkflash
 :noupdate
 wbusy.exe "Chromium Update" /stop
-wprompt.exe "Chromium Update" "Latest Chromium %CHRVER% (%CHRREV%) is already installed^ ^Do you want to reinstall it?" OkCancel 2
+wprompt.exe "Chromium Update" "Latest Chromium %CHRVER% (#%CHRREV%) is already installed^ ^Do you want to reinstall it?" OkCancel 2
 if errorlevel 2 goto checkflash
 goto download
 :serverror
@@ -213,7 +214,7 @@ goto checkflash
 ..\Update\wbusy.exe "Chromium Update" /stop
 :checkflash
 start wbusy.exe "Flash Update" "Searching for Flash updates ..." /marquee
-wget.exe -q --no-check-certificate %AFLASH% -O ..\Temp\AFLASH
+wget.exe -q --no-check-certificate %AFLASH% -O ..\Temp\AFLASH & title %TITLE%
 if errorlevel 1 goto flashserverror
 if not exist "..\Temp\AFLASH" goto flashserverror
 for /F "delims=" %%i in ('sed.exe "/<Pepper/!d;s/.*major=\"//^;s/\".*minor=\"/./^;s/\".*buildMajor=\"/./^;s/\".*buildMinor=\"/./^;s/\".*//" ..\Temp\AFLASH') do set APFVER=%%i
@@ -227,18 +228,19 @@ if "%APFVER%"=="%LPFVER%" goto noflashupdate
 wbusy.exe "Flash Update" /stop
 wprompt.exe "Flash Update" "New Flash available!^ ^Current:  %LPFVER%^Recent:   %APFVER%^ ^Do you want to update?" OkCancel 1
 if errorlevel 2 goto quit
-wget.exe --no-check-certificate --post-data "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request protocol=\"3.0\" ismachine=\"1\"><os version=\"6.1\" arch=\"%ARCH%\"/><app appid=\"{4EA16AC7-FD5A-47C3-875B-DBF4A2008C20}\" ap=\"%AP%\"><updatecheck/></app></request>" http://tools.google.com/service/update2 -O ..\Temp\CANARY
+wget.exe --no-check-certificate --post-data "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request protocol=\"3.0\" ismachine=\"1\"><os version=\"6.1\" arch=\"%ARCH%\"/><app appid=\"{4EA16AC7-FD5A-47C3-875B-DBF4A2008C20}\" ap=\"%AP%\"><updatecheck/></app></request>" http://tools.google.com/service/update2 -O ..\Temp\CANARY & title %TITLE%
 if errorlevel 1 goto flashserverror
 if not exist "..\Temp\CANARY" goto flashserverror
 for /F "tokens=1,2" %%i in ('sed.exe "s/.*codebase=\"//^;s/\"\/.*name=\"//^;s/\".*Version=\"/ /^;s/\".*//" ..\Temp\CANARY') do set CANURL=%%i& set CANVER=%%j
 start wbusy.exe "Flash Update" "Downloading Chrome Canary %CANVER% ..." /marquee
-wget.exe --no-check-certificate %CANURL% -O ..\Temp\canary.zip
+wget.exe --no-check-certificate %CANURL% -O ..\Temp\canary.zip & title %TITLE%
 if errorlevel 1 goto flashserverror
 start wbusy.exe "Flash Update" "Extracting Flash from Chrome Canary %CANVER% ..." /marquee
-7za.exe x -y -t7z ..\Temp\canary.zip -o"..\Temp\canary.7z"
+if exist "..\Temp\chrome.7z" del /F /Q ..\Temp\chrome.7z
+7za.exe x -y -t7z ..\Temp\canary.zip -o"..\Temp"
 if errorlevel 1 goto flashdownerror
 if exist Flash-new rmdir /S /Q Flash-new
-7za.exe e -y ..\Temp\canary.7z Chrome-bin\%CANVER%\PepperFlash\* -o"..\Flash-new\"
+7za.exe e -y ..\Temp\chrome.7z Chrome-bin\%CANVER%\PepperFlash\* -o"..\Flash-new\"
 if errorlevel 1 goto flashdownerror
 if not exist "..\Flash-new\manifest.json" goto flashdownerror
 if not exist "..\Flash-new\pepflashplayer.dll" goto flashdownerror
