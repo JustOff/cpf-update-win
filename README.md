@@ -1,4 +1,4 @@
-**Chromium and Pepper Flash update script for winPenPack**
+**Chromium and Pepper Flash update script for winPenPack portable suite for Windows**
 
 If you are already using winPenPack [X-Chromium](http://www.winpenpack.com/en/download.php?view.1082):
 
