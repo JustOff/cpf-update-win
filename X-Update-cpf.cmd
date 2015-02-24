@@ -1,6 +1,6 @@
 @echo off
-set VERSION=2.09
-set MD5SUM=0A176DA1B925CB8ECA357BBE80560F23
+set VERSION=2.10
+set MD5SUM=0E974ED4ED248E2EA052C5C168D8CC9E
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -96,7 +96,7 @@ set WDIR=Win
 set BIT=32
 set ARCH=x86
 set CAP=
-set SAP=stable32
+set SAP=
 goto begin
 :is64
 if not exist X-Chromium-x64.ini goto noxch
@@ -106,7 +106,7 @@ set WDIR=Win_x64
 set BIT=64
 set ARCH=x64
 set CAP=ap=x64-canary
-set SAP=stable64
+set SAP=x64-stable
 goto begin
 :noxch
 Update\wprompt.exe "X-Chromium not found!" "The winPenPack X-Chromium package not found or broken!^^Reinstall it from http://www.winpenpack.com/en/download.php?view.1082" Ok 1
