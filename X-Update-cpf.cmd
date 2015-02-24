@@ -1,6 +1,6 @@
 @echo off
-set VERSION=2.08
-set MD5SUM=BD61D647E7A427729DA180FBF927BA37
+set VERSION=2.09
+set MD5SUM=0A176DA1B925CB8ECA357BBE80560F23
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -94,10 +94,9 @@ if not exist X-Chromium.exe goto noxch
 set INI=X-Chromium
 set WDIR=Win
 set BIT=32
-set CARCH=x86
+set ARCH=x86
 set CAP=
-set DARCH=dev32
-set DAP=2.0-dev
+set SAP=stable32
 goto begin
 :is64
 if not exist X-Chromium-x64.ini goto noxch
@@ -105,10 +104,9 @@ if not exist X-Chromium-x64.exe goto noxch
 set INI=X-Chromium-x64
 set WDIR=Win_x64
 set BIT=64
-set CARCH=x64
+set ARCH=x64
 set CAP=ap=x64-canary
-set DARCH=dev64
-set DAP=x64-dev
+set SAP=stable64
 goto begin
 :noxch
 Update\wprompt.exe "X-Chromium not found!" "The winPenPack X-Chromium package not found or broken!^^Reinstall it from http://www.winpenpack.com/en/download.php?view.1082" Ok 1
@@ -232,7 +230,7 @@ if "%APFVER%"=="%LPFVER%" goto noflashupdate
 wbusy.exe "Flash Update" /stop
 wprompt.exe "Flash Update" "New Flash available!^ ^Current:  %LPFVER%^Recent:   %APFVER%^ ^Do you want to update?" OkCancel 1
 if errorlevel 2 goto quit
-wget.exe --no-check-certificate --post-data "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request protocol=\"3.0\" ismachine=\"1\"><os version=\"6.1\" arch=\"%CARCH%\"/><app appid=\"{4EA16AC7-FD5A-47C3-875B-DBF4A2008C20}\" ap=\"%CAP%\"><updatecheck/></app></request>" http://tools.google.com/service/update2 -O ..\Temp\CANARY & title %TITLE%
+wget.exe --no-check-certificate --post-data "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request protocol=\"3.0\" ismachine=\"1\"><os version=\"6.1\" arch=\"%ARCH%\"/><app appid=\"{4EA16AC7-FD5A-47C3-875B-DBF4A2008C20}\" ap=\"%CAP%\"><updatecheck/></app></request>" http://tools.google.com/service/update2 -O ..\Temp\CANARY & title %TITLE%
 if errorlevel 1 goto flashserverror
 if not exist "..\Temp\CANARY" goto flashserverror
 for /F "tokens=1,2" %%i in ('sed.exe "s/.*codebase=\"//^;s/\"\/.*name=\"//^;s/\".*Version=\"/ /^;s/\".*//" ..\Temp\CANARY') do set CANURL=%%i& set CANVER=%%j
@@ -251,21 +249,21 @@ if not exist "..\Flash-new\pepflashplayer.dll" goto flashdownerror
 for /F "delims=" %%j in ('jq.exe -r ".version" ..\Flash-new\manifest.json') do set NPFVER=%%j
 if "%NPFVER%"=="%APFVER%" goto instflash
 wbusy.exe "Flash Update" /stop
-wprompt.exe "Flash Update" "Flash from Chrome Canary - %NPFVER%,^while Adobe stable version - %APFVER%!^ ^Do you want to check flash from Chrome Dev?" OkCancel 1
+wprompt.exe "Flash Update" "Flash from Chrome Canary - %NPFVER%,^while Adobe stable version - %APFVER%!^ ^Do you want to check Flash from Chrome Release?" OkCancel 1
 if errorlevel 2 goto quit
-wget.exe --no-check-certificate --post-data "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request protocol=\"3.0\" ismachine=\"1\"><os version=\"6.1\" arch=\"%DARCH%\"/><app appid=\"{8A69D345-D564-463C-AFF1-A69D9E530F96}\" ap=\"%DAP%\"><updatecheck/></app></request>" http://tools.google.com/service/update2 -O ..\Temp\DEV & title %TITLE%
+wget.exe --no-check-certificate --post-data "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request protocol=\"3.0\" ismachine=\"1\"><os version=\"6.1\" arch=\"%ARCH%\"/><app appid=\"{8A69D345-D564-463C-AFF1-A69D9E530F96}\" ap=\"%SAP%\"><updatecheck/></app></request>" http://tools.google.com/service/update2 -O ..\Temp\REL & title %TITLE%
 if errorlevel 1 goto flashserverror
-if not exist "..\Temp\DEV" goto flashserverror
-for /F "tokens=1,2" %%i in ('sed.exe "s/.*codebase=\"//^;s/\"\/.*name=\"//^;s/\".*Version=\"/ /^;s/\".*//" ..\Temp\DEV') do set DEVURL=%%i& set DEVVER=%%j
-start wbusy.exe "Flash Update" "Downloading Chrome Dev %DEVVER% ..." /marquee
-wget.exe --no-check-certificate %DEVURL% -O ..\Temp\dev.zip & title %TITLE%
+if not exist "..\Temp\REL" goto flashserverror
+for /F "tokens=1,2" %%i in ('sed.exe "s/.*codebase=\"//^;s/\"\/.*name=\"//^;s/\".*Version=\"/ /^;s/\".*//" ..\Temp\REL') do set RELURL=%%i& set RELVER=%%j
+start wbusy.exe "Flash Update" "Downloading Chrome Release %RELVER% ..." /marquee
+wget.exe --no-check-certificate %RELURL% -O ..\Temp\rel.zip & title %TITLE%
 if errorlevel 1 goto flashserverror
-start wbusy.exe "Flash Update" "Extracting Flash from Chrome Dev %DEVVER% ..." /marquee
+start wbusy.exe "Flash Update" "Extracting Flash from Chrome Release %RELVER% ..." /marquee
 if exist "..\Temp\chrome.7z" del /F /Q ..\Temp\chrome.7z
-7za.exe x -y -t7z ..\Temp\dev.zip -o"..\Temp"
+7za.exe x -y -t7z ..\Temp\rel.zip -o"..\Temp"
 if errorlevel 1 goto flashdownerror
 if exist Flash-new rmdir /S /Q Flash-new
-7za.exe e -y ..\Temp\chrome.7z Chrome-bin\%DEVVER%\PepperFlash\* -o"..\Flash-new\"
+7za.exe e -y ..\Temp\chrome.7z Chrome-bin\%RELVER%\PepperFlash\* -o"..\Flash-new\"
 if errorlevel 1 goto flashdownerror
 if not exist "..\Flash-new\manifest.json" goto flashdownerror
 if not exist "..\Flash-new\pepflashplayer.dll" goto flashdownerror
