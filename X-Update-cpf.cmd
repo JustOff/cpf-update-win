@@ -1,6 +1,6 @@
 @echo off
-set VERSION=2.10
-set MD5SUM=0E974ED4ED248E2EA052C5C168D8CC9E
+set VERSION=3.01
+set MD5SUM=A55E0A489A1431A6CD5917F0589FD0D5
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -91,6 +91,7 @@ exit
 :is32
 if not exist X-Chromium.ini goto is64
 if not exist X-Chromium.exe goto noxch
+if "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set SPFDIR=SysWOW64) else (set SPFDIR=system32)
 set INI=X-Chromium
 set WDIR=Win
 set BIT=32
@@ -101,6 +102,7 @@ goto begin
 :is64
 if not exist X-Chromium-x64.ini goto noxch
 if not exist X-Chromium-x64.exe goto noxch
+set SPFDIR=system32
 set INI=X-Chromium-x64
 set WDIR=Win_x64
 set BIT=64
@@ -215,6 +217,17 @@ goto checkflash
 :stop
 ..\Update\wbusy.exe "Chromium Update" /stop
 :checkflash
+if "%CHRVER%" LEQ "43.0.2324.0" goto nosysflash
+if not exist %WINDIR%\%SPFDIR%\Macromed\Flash\manifest.json goto nosysflash
+for /F "delims=" %%j in ('jq.exe -r ".version" %WINDIR%\%SPFDIR%\Macromed\Flash\manifest.json') do set SPFVER=%%j
+dir /b %WINDIR%\%SPFDIR%\Macromed\Flash\pepflashplayer%BIT%*.dll 2>NUL | find /I /N "pepflashplayer%BIT%">NUL
+if errorlevel 1 goto nosysflash
+if exist "../Flash" rmdir /S /Q "../Flash"
+find /I /N "ppapi-flash-path" ../%INI%.ini>NUL
+if "%ERRORLEVEL%"=="0" sed.exe -i "s/disk-cache-dir.*/disk-cache-dir=\"$Cache$\"/" ../%INI%.ini
+wprompt.exe "Flash Update" "Using System Pepper Flash %SPFVER%" Ok 1:2
+goto quit
+:nosysflash
 start wbusy.exe "Flash Update" "Searching for Flash updates ..." /marquee
 wget.exe -q --no-check-certificate %AFLASH% -O ..\Temp\AFLASH & title %TITLE%
 if errorlevel 1 goto flashserverror
