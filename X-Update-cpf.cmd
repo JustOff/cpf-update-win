@@ -1,6 +1,6 @@
 @echo off
-set VERSION=3.01
-set MD5SUM=A55E0A489A1431A6CD5917F0589FD0D5
+set VERSION=3.04
+set MD5SUM=E70E16BCC41F558304542D265DA1DB3D
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -156,8 +156,8 @@ if not exist "..\Bin\VERSION" goto nolocal
 for /F "tokens=1,2" %%i in ('jq.exe -r "[.chromium.windows.version, .chromium.windows.revision|tostring]|join(\" \")" ..\Bin\VERSION') do set LCHVER=%%i& set LCHREV=%%j
 goto compare
 :nolocal
-set LCHVER=undefined
-set LCHREV=
+for /F "delims=" %%i in ('sed.exe "/^Soft.Version/!d;s/Soft.Version=//" ..\%INI%.ini') do set LCHVER=%%i
+set LCHREV=unknown
 :compare
 if "%CHRREV%"=="%LCHREV%" goto noupdate
 wbusy.exe "Chromium Update" /stop
@@ -171,7 +171,7 @@ wbusy.exe "Chromium Update" /stop
 wprompt.exe "Chromium Update" "Chromium %CHRVER% (#%CHRREV%) downloaded!^ ^Do you want to install it?" OkCancel 1
 if errorlevel 2 goto checkflash
 :checkrun
-if not exist "..\User" goto install
+if not exist "..\User\Chrome\Default" goto install
 if exist "..\User\Chrome\chrome_shutdown_ms.txt" goto install
 wprompt.exe "Chromium Update" "Please close Chromium to install update!" OkCancel 1
 if errorlevel 2 goto checkflash
@@ -199,6 +199,7 @@ goto finish
 rmdir /S /Q Chrome-old
 cd ..\Update
 copy /y ..\Temp\LASTCHR ..\Bin\VERSION
+set LCHVER=%CHRVER%
 wbusy.exe "Chromium Update" /stop
 wprompt.exe "Chromium Update" "Chromium %CHRVER% (#%CHRREV%) installed!" Ok
 goto checkflash
@@ -217,14 +218,14 @@ goto checkflash
 :stop
 ..\Update\wbusy.exe "Chromium Update" /stop
 :checkflash
-if "%CHRVER%" LEQ "43.0.2324.0" goto nosysflash
+if "%LCHVER%" LSS "43.0.2324.0" goto nosysflash
 if not exist %WINDIR%\%SPFDIR%\Macromed\Flash\manifest.json goto nosysflash
 for /F "delims=" %%j in ('jq.exe -r ".version" %WINDIR%\%SPFDIR%\Macromed\Flash\manifest.json') do set SPFVER=%%j
 dir /b %WINDIR%\%SPFDIR%\Macromed\Flash\pepflashplayer%BIT%*.dll 2>NUL | find /I /N "pepflashplayer%BIT%">NUL
 if errorlevel 1 goto nosysflash
 if exist "../Flash" rmdir /S /Q "../Flash"
 find /I /N "ppapi-flash-path" ../%INI%.ini>NUL
-if "%ERRORLEVEL%"=="0" sed.exe -i "s/disk-cache-dir.*/disk-cache-dir=\"$Cache$\"/" ../%INI%.ini
+if "%ERRORLEVEL%"=="0" sed.exe -i "s/disk-cache-dir.*/disk-cache-dir=\"$Cache$\"/" ..\%INI%.ini
 wprompt.exe "Flash Update" "Using System Pepper Flash %SPFVER%" Ok 1:2
 goto quit
 :nosysflash
