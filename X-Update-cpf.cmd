@@ -1,6 +1,6 @@
 @echo off
-set VERSION=3.04
-set MD5SUM=E70E16BCC41F558304542D265DA1DB3D
+set VERSION=3.05
+set MD5SUM=A9214DF0BDD6C3C5DACDDA37FAF3C565
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -157,6 +157,7 @@ for /F "tokens=1,2" %%i in ('jq.exe -r "[.chromium.windows.version, .chromium.wi
 goto compare
 :nolocal
 for /F "delims=" %%i in ('sed.exe "/^Soft.Version/!d;s/Soft.Version=//" ..\%INI%.ini') do set LCHVER=%%i
+if not exist "..\Bin\Chrome\chrome.exe" set LCHVER=undefined
 set LCHREV=unknown
 :compare
 if "%CHRREV%"=="%LCHREV%" goto noupdate
@@ -221,9 +222,9 @@ goto checkflash
 if "%LCHVER%" LSS "43.0.2324.0" goto nosysflash
 if not exist %WINDIR%\%SPFDIR%\Macromed\Flash\manifest.json goto nosysflash
 for /F "delims=" %%j in ('jq.exe -r ".version" %WINDIR%\%SPFDIR%\Macromed\Flash\manifest.json') do set SPFVER=%%j
-dir /b %WINDIR%\%SPFDIR%\Macromed\Flash\pepflashplayer%BIT%*.dll 2>NUL | find /I /N "pepflashplayer%BIT%">NUL
+dir /B %WINDIR%\%SPFDIR%\Macromed\Flash\pepflashplayer%BIT%*.dll 2>NUL | find /I /N "pepflashplayer%BIT%">NUL
 if errorlevel 1 goto nosysflash
-if exist "../Flash" rmdir /S /Q "../Flash"
+if exist "..\Flash" rmdir /S /Q ..\Flash
 find /I /N "ppapi-flash-path" ../%INI%.ini>NUL
 if "%ERRORLEVEL%"=="0" sed.exe -i "s/disk-cache-dir.*/disk-cache-dir=\"$Cache$\"/" ..\%INI%.ini
 wprompt.exe "Flash Update" "Using System Pepper Flash %SPFVER%" Ok 1:2
