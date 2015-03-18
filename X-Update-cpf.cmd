@@ -1,6 +1,6 @@
 @echo off
-set VERSION=3.05
-set MD5SUM=A9214DF0BDD6C3C5DACDDA37FAF3C565
+set VERSION=3.06
+set MD5SUM=3D09E33ABC2FAC913DDB75F08317E700
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -235,6 +235,7 @@ wget.exe -q --no-check-certificate %AFLASH% -O ..\Temp\AFLASH & title %TITLE%
 if errorlevel 1 goto flashserverror
 if not exist "..\Temp\AFLASH" goto flashserverror
 for /F "delims=" %%i in ('sed.exe "/<Pepper/!d;s/.*major=\"//^;s/\".*minor=\"/./^;s/\".*buildMajor=\"/./^;s/\".*buildMinor=\"/./^;s/\".*//" ..\Temp\AFLASH') do set APFVER=%%i
+if "%APFVER%"=="16.0.0.305" set APFVER=17.0.0.134
 if not exist "..\Flash\manifest.json" goto noflash
 for /F "delims=" %%j in ('jq.exe -r ".version" ..\Flash\manifest.json') do set LPFVER=%%j
 goto flashcompare
