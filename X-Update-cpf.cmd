@@ -1,6 +1,6 @@
 @echo off
-set VERSION=3.07
-set MD5SUM=E5673A0CED348FF8FC96F7851FB78553
+set VERSION=3.08
+set MD5SUM=5F31BA99CA4243D85133268BECCF3922
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -119,7 +119,7 @@ set CPFUPD=https://raw.githubusercontent.com/JustOff/cpf-update-win/master/X-Upd
 set WOOLYSS="http://chromium.woolyss.com/api/?os=windows&bit=%BIT%"
 set CHRURL=https://storage.googleapis.com/chromium-browser-continuous/%WDIR%
 set INSTALLER=mini_installer.exe
-set AFLASH=http://fpdownload.macromedia.com/pub/flashplayer/update/current/sau/16/xml/version.xml
+set AFLASH=http://www.adobe.com/software/flash/about/
 cd Update
 start wbusy.exe "Self Update" "Searching for script updates ..." /marquee
 if exist "..\Temp" rmdir /S /Q ..\Temp
@@ -234,8 +234,7 @@ start wbusy.exe "Flash Update" "Searching for Flash updates ..." /marquee
 wget.exe -q --no-check-certificate %AFLASH% -O ..\Temp\AFLASH & title %TITLE%
 if errorlevel 1 goto flashserverror
 if not exist "..\Temp\AFLASH" goto flashserverror
-for /F "delims=" %%i in ('sed.exe "/<Pepper/!d;s/.*major=\"//^;s/\".*minor=\"/./^;s/\".*buildMajor=\"/./^;s/\".*buildMinor=\"/./^;s/\".*//" ..\Temp\AFLASH') do set APFVER=%%i
-if "%APFVER%" LSS "17.0.0.134" set APFVER=17.0.0.134
+for /F "delims=" %%i in ('sed.exe ":a;N;$!ba;s/.*Platform//;s/.*Windows//;s/Macintosh.*//;s/.*PPAPI//;s/<\/tr>.*//;s/.*<td>//;s/<\/td>.*//" ..\Temp\AFLASH') do set APFVER=%%i
 if not exist "..\Flash\manifest.json" goto noflash
 for /F "delims=" %%j in ('jq.exe -r ".version" ..\Flash\manifest.json') do set LPFVER=%%j
 goto flashcompare
