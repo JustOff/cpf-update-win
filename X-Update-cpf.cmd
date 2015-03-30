@@ -1,6 +1,6 @@
 @echo off
-set VERSION=3.09
-set MD5SUM=829E5628B853F55DD4915442A3D12ACF
+set VERSION=3.10
+set MD5SUM=2079C6D5B16674CD7E2456AE3F0F7AC5
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -220,8 +220,11 @@ goto checkflash
 ..\Update\wbusy.exe "Chromium Update" /stop
 :checkflash
 if "%LCHVER%" LSS "43.0.2324.0" goto nosysflash
-if "%BIT%"=="64" goto nosysflash
 if not exist %WINDIR%\%SPFDIR%\Macromed\Flash\manifest.json goto nosysflash
+if "%BIT%"=="32" goto checksysflash
+for /F "delims=" %%j in ('jq.exe -r ".\"x-ppapi-arch\"" %WINDIR%\%SPFDIR%\Macromed\Flash\manifest.json') do set SPFARCH=%%j
+if "%SPFARCH%" NEQ "x64" goto nosysflash
+:checksysflash
 for /F "delims=" %%j in ('jq.exe -r ".version" %WINDIR%\%SPFDIR%\Macromed\Flash\manifest.json') do set SPFVER=%%j
 dir /B %WINDIR%\%SPFDIR%\Macromed\Flash\pepflashplayer%BIT%*.dll 2>NUL | find /I /N "pepflashplayer%BIT%">NUL
 if errorlevel 1 goto nosysflash
