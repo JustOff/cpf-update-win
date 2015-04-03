@@ -303,7 +303,7 @@ goto checkrun3
 :flashfinish
 ren Flash-new Flash
 if exist Flash-old rmdir /S /Q Flash-old
-Update\sed.exe -i "s/disk-cache-dir.*/disk-cache-dir=\"$Cache$\" --ppapi-flash-path=$Root$\\Flash\\pepflashplayer.dll --ppapi-flash-version=%NPFVER%/" %INI%.ini
+Update\sed.exe -i "s/disk-cache-dir.*/disk-cache-dir=\"$Cache$\" --ppapi-flash-path=\"$Root$\\Flash\\pepflashplayer.dll\" --ppapi-flash-version=%NPFVER%/" %INI%.ini
 cd Update
 wbusy.exe "Flash Update" /stop
 wprompt.exe "Flash Update" "Flash %NPFVER% installed!" Ok 1
