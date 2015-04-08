@@ -1,6 +1,6 @@
 @echo off
-set VERSION=3.12
-set MD5SUM=0CE8258102F0664F7CF469E952146239
+set VERSION=3.13
+set MD5SUM=EA63E16C2930634F8181A86E0182CAB1
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -92,6 +92,7 @@ exit
 if not exist X-Chromium.ini goto is64
 if not exist X-Chromium.exe goto noxch
 if "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set SPFDIR=SysWOW64) else (set SPFDIR=system32)
+set NSPFDIR=%SPFDIR%
 set INI=X-Chromium
 set WDIR=Win
 set BIT=32
@@ -104,6 +105,8 @@ goto begin
 if not exist X-Chromium-x64.ini goto noxch
 if not exist X-Chromium-x64.exe goto noxch
 set SPFDIR=system32
+set NSPFDIR=sys
+set NSPFDIR=%NSPFDIR%native
 set INI=X-Chromium-x64
 set WDIR=Win_x64
 set BIT=64
@@ -223,7 +226,7 @@ goto checkflash
 :checkflash
 if "%LCHVER%" LSS "43.0.2324.0" goto nosysflash
 if not exist %WINDIR%\%SPFDIR%\Macromed\Flash\manifest.json goto nosysflash
-for /F "delims=" %%j in ('jq.exe -r ".\"x-ppapi-arch\"" %WINDIR%\%SPFDIR%\Macromed\Flash\manifest.json') do set SPFARCH=%%j
+for /F "delims=" %%j in ('jq.exe -r ".\"x-ppapi-arch\"" %WINDIR%\%NSPFDIR%\Macromed\Flash\manifest.json') do set SPFARCH=%%j
 if "%SPFARCH%" NEQ "%JSARCH%" goto nosysflash
 for /F "delims=" %%j in ('jq.exe -r ".version" %WINDIR%\%SPFDIR%\Macromed\Flash\manifest.json') do set SPFVER=%%j
 dir /B %WINDIR%\%SPFDIR%\Macromed\Flash\pepflashplayer%BIT%*.dll 2>NUL | find /I /N "pepflashplayer%BIT%">NUL
