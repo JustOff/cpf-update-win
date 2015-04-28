@@ -1,6 +1,6 @@
 @echo off
-set VERSION=3.13
-set MD5SUM=EA63E16C2930634F8181A86E0182CAB1
+set VERSION=3.14
+set MD5SUM=6A13F5EE9FAD41DD056445D92C4A6B6B
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -248,7 +248,7 @@ goto flashcompare
 :noflash
 set LPFVER=undefined
 :flashcompare
-if "%APFVER%"=="%LPFVER%" goto noflashupdate
+if "%APFVER%"=="%LPFVER%" goto noflashupd
 wbusy.exe "Flash Update" /stop
 wprompt.exe "Flash Update" "New Flash available!^ ^Current:  %LPFVER%^Recent:   %APFVER%^ ^Do you want to update?" OkCancel 1
 if errorlevel 2 goto quit
@@ -311,7 +311,7 @@ cd Update
 wbusy.exe "Flash Update" /stop
 wprompt.exe "Flash Update" "Flash %NPFVER% installed!" Ok 1
 goto quit
-:noflashupdate
+:noflashupd
 wbusy.exe "Flash Update" /stop
 wprompt.exe "Flash Update" "Latest Flash %LPFVER% is already installed" Ok 1
 goto quit
