@@ -1,6 +1,6 @@
 @echo off
-set VERSION=3.14
-set MD5SUM=6A13F5EE9FAD41DD056445D92C4A6B6B
+set VERSION=3.15
+set MD5SUM=AA3165D78B9A944C456894E0A0513B67
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -248,7 +248,7 @@ goto flashcompare
 :noflash
 set LPFVER=undefined
 :flashcompare
-if "%APFVER%"=="%LPFVER%" goto noflashupd
+if "%APFVER%"=="%LPFVER%" goto nofupd
 wbusy.exe "Flash Update" /stop
 wprompt.exe "Flash Update" "New Flash available!^ ^Current:  %LPFVER%^Recent:   %APFVER%^ ^Do you want to update?" OkCancel 1
 if errorlevel 2 goto quit
@@ -262,7 +262,7 @@ if errorlevel 1 goto flashserverror
 start wbusy.exe "Flash Update" "Extracting Flash from Chrome Canary %CANVER% ..." /marquee
 if exist "..\Temp\chrome.7z" del /F /Q ..\Temp\chrome.7z
 7za.exe x -y -t7z ..\Temp\canary.zip -o"..\Temp"
-if errorlevel 1 goto flashdownerror
+if errorlevel 1 goto relflash
 if exist Flash-new rmdir /S /Q Flash-new
 7za.exe e -y ..\Temp\chrome.7z Chrome-bin\%CANVER%\PepperFlash\* -o"..\Flash-new\"
 if errorlevel 1 goto flashdownerror
@@ -273,6 +273,7 @@ if "%NPFVER%"=="%APFVER%" goto instflash
 wbusy.exe "Flash Update" /stop
 wprompt.exe "Flash Update" "Flash from Chrome Canary - %NPFVER%,^while Adobe stable version - %APFVER%!^ ^Do you want to check Flash from Chrome Release?" OkCancel 1
 if errorlevel 2 goto quit
+:relflash
 wget.exe --no-check-certificate --post-data "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request protocol=\"3.0\" ismachine=\"1\"><os version=\"6.1\" arch=\"%ARCH%\"/><app appid=\"{8A69D345-D564-463C-AFF1-A69D9E530F96}\" ap=\"%SAP%\"><updatecheck/></app></request>" http://tools.google.com/service/update2 -O ..\Temp\REL & title %TITLE%
 if errorlevel 1 goto flashserverror
 if not exist "..\Temp\REL" goto flashserverror
@@ -311,7 +312,7 @@ cd Update
 wbusy.exe "Flash Update" /stop
 wprompt.exe "Flash Update" "Flash %NPFVER% installed!" Ok 1
 goto quit
-:noflashupd
+:nofupd
 wbusy.exe "Flash Update" /stop
 wprompt.exe "Flash Update" "Latest Flash %LPFVER% is already installed" Ok 1
 goto quit
