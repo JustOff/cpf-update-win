@@ -1,6 +1,6 @@
 @echo off
-set VERSION=3.15
-set MD5SUM=AA3165D78B9A944C456894E0A0513B67
+set VERSION=3.16
+set MD5SUM=C195F934163B756F8504F66DBB02CBC7
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -153,7 +153,7 @@ wbusy.exe "Self Update" /stop
 wprompt.exe "Self Update" "Script self update error^^Try to check again later ..." Ok 1:3
 :checkchromium
 start wbusy.exe "Chromium Update" "Searching for Chromium updates ..." /marquee
-wget.exe -q --no-check-certificate %WOOLYSS% -O ..\Temp\LASTCHR & title %TITLE%
+wget.exe -q --no-check-certificate --header="User-Agent: cpf-update-win %VERSION%"  %WOOLYSS% -O ..\Temp\LASTCHR & title %TITLE%
 if errorlevel 1 goto serverror
 if not exist "..\Temp\LASTCHR" goto serverror
 for /F "tokens=1,2" %%i in ('jq.exe -r "[.chromium.windows.version, .chromium.windows.revision|tostring]|join(\" \")" ..\Temp\LASTCHR') do set CHRVER=%%i& set CHRREV=%%j
