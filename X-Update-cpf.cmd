@@ -1,6 +1,6 @@
 @echo off
-set VERSION=3.16
-set MD5SUM=C195F934163B756F8504F66DBB02CBC7
+set VERSION=3.17
+set MD5SUM=FDD76DA87031B9BF07F0404DE20B986B
 rem .
 rem .	Chromium and Pepper Flash update script for winPenPack
 rem .	(c) 2015 JustOff <Off.Just.Off@gmail.com>, licensed under MIT
@@ -122,7 +122,7 @@ exit
 :begin
 set CPFUPD=https://raw.githubusercontent.com/JustOff/cpf-update-win/master/X-Update-cpf.cmd
 set WOOLYSS="http://chromium.woolyss.com/api/?os=windows&bit=%BIT%"
-set CHRURL=https://storage.googleapis.com/chromium-browser-continuous/%WDIR%
+set CHRURL=https://storage.googleapis.com/chromium-browser-snapshots/%WDIR%
 set INSTALLER=mini_installer.exe
 set AFLASH=http://www.adobe.com/software/flash/about/
 cd Update
@@ -179,6 +179,7 @@ if errorlevel 2 goto checkflash
 :checkrun
 if not exist "..\User\Chrome\Default" goto install
 if exist "..\User\Chrome\chrome_shutdown_ms.txt" goto install
+if not exist "..\User\Chrome\lockfile" goto install
 wprompt.exe "Chromium Update" "Please close Chromium to install update!" OkCancel 1
 if errorlevel 2 goto checkflash
 goto checkrun
