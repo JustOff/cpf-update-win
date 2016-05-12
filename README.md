@@ -23,4 +23,4 @@ Credits and Thanks:
 * [Dreamlikes](https://code.google.com/p/gnu-on-windows/)
 * [John Walker](https://www.fourmilab.ch/md5/)
 
-&copy; 2015 JustOff, licensed under MIT
+&copy; 2015-2016 JustOff, licensed under MIT
